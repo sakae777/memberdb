@@ -30,47 +30,55 @@ int EmailFormat(const char* email)/*이멜일 포맷 확인 */ {
 
 
 void saveMember()/*선택 1 회원정보 저장*/ {
-    FILE* file = fopen("members.txt", "a");// 회원정보추가해야  하므로 a 모드로 열기 파일이 없으면 생성
+    FILE* file = fopen("members.txt", "a"); // 회원정보 추가를 위해 "a" 모드로 파일 열기. 파일이 없으면 생성됨
     if (file == NULL) {
         printf("파일을 열 수 없습니다.\n");
         return;
     }
 
-    char answer = 'Y';//연속 입력을 위한 변수 선언
+    char answer = 'Y'; // 연속 입력을 위한 변수 선언
     while (answer == 'Y' || answer == 'y') {
         Member member;
         memset(&member, 0, sizeof(Member));
 
         printf("이름: ");
-        fgets(member.name, MAX_NAME_LENGTH, stdin);//fscanf 로 하면 띄워쓰기 단위로 입력받기에 fgets 사용 
-        member.name[strcspn(member.name, "\n")] = '\0';//fgets 사용시 \n까지 입력받기때문에 제거해주기 
+        fgets(member.name, MAX_NAME_LENGTH, stdin);
+        member.name[strcspn(member.name, "\n")] = '\0';
 
-        printf("나이: ");
-        scanf("%d", &member.age);
-        getchar();  // 입력 버퍼 비우기
+        while (1) {
+            printf("나이: ");
+            scanf("%d", &member.age);
+            getchar(); // 입력 버퍼 비우기
 
-				if (member.age > 200){//나이200보다 크게 입력시 다시 입력받기
-					printf("나이는 최대 200세 까지입니다.올발른 나이를 입력해주세요");
-					continue;
-				}
+            if (member.age > 200) {
+                printf("나이는 최대 200세까지입니다. 올바른 나이를 입력해주세요.\n");
+            } else {
+                break; // 올바른 나이가 입력되면 반복문 탈출
+            }
+        }
 
-        printf("이메일: ");
-        fgets(member.email, MAX_EMAIL_LENGTH, stdin);
-        member.email[strcspn(member.email, "\n")] = '\0';
-				
-				if (!EmailFormat(member.email)) {// 이메일 포맷 형식이 어긋날경우 다시 입력받기 
-            printf("올바른 이메일 형식이 아닙니다. 다시 입력해주세요.\n");
-            continue; // 다시 입력받기
-				}
-        fprintf(file, "%s/%d/%s\n", member.name, member.age, member.email);// 파일에 입력하기
+        while (1) {
+            printf("이메일: ");
+            fgets(member.email, MAX_EMAIL_LENGTH, stdin);
+            member.email[strcspn(member.email, "\n")] = '\0';
+
+            if (!EmailFormat(member.email)) {
+                printf("올바른 이메일 형식이 아닙니다. 다시 입력해주세요.\n");
+            } else {
+                break; // 올바른 이메일 형식이 입력되면 반복문 탈출
+            }
+        }
+
+        fprintf(file, "%s/%d/%s\n", member.name, member.age, member.email);
 
         printf("계속 입력하시겠습니까? (Y/N): ");
-        scanf("%c", &answer);
-        getchar();  // 입력 버퍼 비우기
+        scanf(" %c", &answer);
+        getchar(); // 입력 버퍼 비우기
     }
 
     fclose(file);
 }
+
 void updateMember()/*선택 2 회원정보 수정*/ {
     char name[MAX_NAME_LENGTH];
     printf("수정할 회원의 이름을 입력하세요: ");
@@ -94,42 +102,49 @@ void updateMember()/*선택 2 회원정보 수정*/ {
     char currentName[MAX_NAME_LENGTH];
     int found = 0;
 
-    while (fgets(line, sizeof(line), file)) {//반복문을 이용하여 라인 단위로 읽어오기
+    while (fgets(line, sizeof(line), file)) {
         sscanf(line, "%[^/]", currentName);
-        if (strcmp(currentName, name) == 0) {//비교 후 수정 
-						printf("새로운 회원 정보를 입력하세요.\n");
+        if (strcmp(currentName, name) == 0) {
+            printf("새로운 회원 정보를 입력하세요.\n");
             Member updatedMember;
             printf("이름: ");
             fgets(updatedMember.name, MAX_NAME_LENGTH, stdin);
             updatedMember.name[strcspn(updatedMember.name, "\n")] = '\0';
 
-            printf("나이: ");
-            scanf("%d", &updatedMember.age);
-            getchar();  // 버퍼 비우기
+            while (1) {
+                printf("나이: ");
+                scanf("%d", &updatedMember.age);
+                getchar();  // 버퍼 비우기
 
-						if(updatedMember.age > 200){
-							printf("나이는 최대 200세 까지입니다. 올바른 나이를 입력해주세요");
-							continue ; 
-						}
+                if (updatedMember.age > 200) {
+                    printf("나이는 최대 200세까지입니다. 올바른 나이를 입력해주세요.\n");
+                }
+							 	else {
+                    break;
+                }
+            }
 
+            while (1) {
+                printf("이메일: ");
+                fgets(updatedMember.email, MAX_EMAIL_LENGTH, stdin);
+                updatedMember.email[strcspn(updatedMember.email, "\n")] = '\0';
 
-            printf("이메일: ");
-            fgets(updatedMember.email, MAX_EMAIL_LENGTH, stdin);
-            updatedMember.email[strcspn(updatedMember.email, "\n")] = '\0';
-
-						if (!EmailFormat(updatedMember.email)) {
-            	printf("올바른 이메일 형식이 아닙니다. 다시 입력해주세요.\n");
-            	continue; // 다시 입력받기 
-						}
+                if (!EmailFormat(updatedMember.email)) {
+                    printf("올바른 이메일 형식이 아닙니다. 다시 입력해주세요.\n");
+                }
+							 	else {
+                    break;
+                }
+            }
 
             fprintf(tempFile, "%s/%d/%s\n", updatedMember.name, updatedMember.age, updatedMember.email);
             printf("회원 정보가 수정되었습니다.\n");
             found = 1;
         }
-        else {
-            fprintf(tempFile, "%s", line);//라인단위로 읽어오며 수정할회원이 아닌경우 그대로 저장
+			 	else {
+            fprintf(tempFile, "%s", line);
         }
-    }
+    }  
 
     fclose(file);
     fclose(tempFile);
