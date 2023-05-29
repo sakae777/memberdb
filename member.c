@@ -62,7 +62,7 @@ void saveMember()/*선택 1 회원정보 저장*/ {
             printf("올바른 이메일 형식이 아닙니다. 다시 입력해주세요.\n");
             continue; // 다시 입력받기
 				}
-        fprintf(file, "%s / %d / %s\n", member.name, member.age, member.email);// 파일에 입력하기
+        fprintf(file, "%s/%d/%s\n", member.name, member.age, member.email);// 파일에 입력하기
 
         printf("계속 입력하시겠습니까? (Y/N): ");
         scanf("%c", &answer);
@@ -96,7 +96,7 @@ void updateMember()/*선택 2 회원정보 수정*/ {
 
     while (fgets(line, sizeof(line), file)) {//반복문을 이용하여 라인 단위로 읽어오기
         sscanf(line, "%[^/]", currentName);
-        if (strcmp(currentName, name) == 0|| strcmp(currentName, strcat(name," "))==0){//비교 후 수정 
+        if (strcmp(currentName, name) == 0) {//비교 후 수정 
 						printf("새로운 회원 정보를 입력하세요.\n");
             Member updatedMember;
             printf("이름: ");
@@ -122,7 +122,7 @@ void updateMember()/*선택 2 회원정보 수정*/ {
             	continue; // 다시 입력받기 
 						}
 
-            fprintf(tempFile, "%s / %d / %s\n", updatedMember.name, updatedMember.age, updatedMember.email);
+            fprintf(tempFile, "%s/%d/%s\n", updatedMember.name, updatedMember.age, updatedMember.email);
             printf("회원 정보가 수정되었습니다.\n");
             found = 1;
         }
@@ -167,7 +167,7 @@ void deleteMember()/*회원 정보 삭제*/ {
 
     while (fgets(line, sizeof(line), file)) {
         sscanf(line, "%[^/]", currentName);
-        if (strcmp(currentName, name) == 0 || strcmp(currentName, strcat(name, " ")) == 0) {
+        if (strcmp(currentName, name) == 0){
             printf("회원이 삭제되었습니다.\n");
             found = 1;
         }
